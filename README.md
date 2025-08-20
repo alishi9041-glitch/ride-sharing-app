@@ -58,8 +58,8 @@ Dummy Products for Stores to sell and users to buy from.
 ### 1. Clone and Setup
 
 ```bash
-git clone <repository-url>
-cd <to-the-clone-directory>
+git clone git@github.com:techops-recsys-lateral-hiring/joi-delivery-golang.git
+cd joi-delivery-golang
 ```
 
 ### 2. Install Dependencies
@@ -92,3 +92,105 @@ The project includes a `Makefile` with common development tasks:
 | `make test` | Run all tests |
 | `make deps` | Download dependencies |
 | `make tidy` | Tidy go.mod and go.sum |
+
+## API
+
+Below is a list of API endpoints with their respective input and output. Please note that the application needs to be running for the following endpoints to work. For more information about how to run the application, please refer to run the application section above.
+
+### Add Product to Cart
+```http
+POST /cart/product
+Content-Type: application/json
+```
+
+Request Body
+```json
+{
+  "userId": "user101",
+  "productId": "product101",
+  "outletId": "store101"
+}
+```
+
+Response Body
+```json
+{
+  "cart": {
+    "cartId": "cart101",
+    "outlet": null,
+    "products": [
+      {
+        "productId": "product103",
+        "productName": "Crackers",
+        "mrp": 10.5,
+        "sellingPrice": null,
+        "weight": 500,
+        "expiryDate": 0,
+        "threshold": 10,
+        "availableStock": 30,
+        "discount": null,
+        "store": {
+          "name": "Fresh Picks",
+          "description": null,
+          "outletId": "store101",
+          "inventory": []
+        }
+      }
+    ],
+    "user": null
+  },
+  "product": {
+    "productId": "product103",
+    "productName": "Crackers",
+    "mrp": 10.5,
+    "sellingPrice": null,
+    "weight": 500,
+    "expiryDate": 0,
+    "threshold": 10,
+    "availableStock": 30,
+    "discount": null,
+    "store": {
+      "name": "Fresh Picks",
+      "description": null,
+      "outletId": "store101",
+      "inventory": []
+    }
+  },
+  "sellingPrice": null
+}
+```
+
+### View Cart
+```http
+GET /cart/view?userId=user101
+```
+
+Response Body
+```json
+{
+  "id": "cart101",
+  "outlet": null,
+  "user": {
+    "id": "user101",
+    "username": "",
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "",
+    "phoneNumber": "",
+    "cart": null
+  },
+  "products": []
+}
+```
+
+### Inventory Health
+```http
+GET /inventory/health?storeid=<storeid>
+```
+
+Response Body
+```json lines
+{
+    // to be implemented.
+}
+```
