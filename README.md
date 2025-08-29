@@ -49,50 +49,6 @@ Dummy Products for Stores to sell and users to buy from.
 | product102 | Spinach     | store101   |
 | product103 | Crackers    | store101   |
 
-## Tech Requirements & Quick Setup
-
-### Prerequisites
-
-- Go 1.24.5 or higher (refer—https://go.dev/doc/install)
-
-### 1. Clone and Setup
-
-```bash
-git clone git@github.com:techops-recsys-lateral-hiring/joi-delivery-golang.git
-cd joi-delivery-golang
-```
-
-### 2. Install Dependencies
-
-```bash
-make deps
-```
-
-### 3. Run Tests
-
-```bash
-make test
-```
-
-### 4. Start the Server
-
-```bash
-make run
-```
-
-The server will start on `http://localhost:8080`
-
-## Development Commands
-
-The project includes a `Makefile` with common development tasks:
-
-| Command | Description |
-|---------|-------------|
-| `make run` | Run the application locally |
-| `make test` | Run all tests |
-| `make deps` | Download dependencies |
-| `make tidy` | Tidy go.mod and go.sum |
-
 ## API
 
 Below is a list of API endpoints with their respective input and output. Please note that the application needs to be running for the following endpoints to work. For more information about how to run the application, please refer to run the application section above.
@@ -194,3 +150,48 @@ Response Body
     // to be implemented.
 }
 ```
+
+## Tech Requirements & Quick Setup
+
+### Prerequisites
+
+- Go 1.24.5 or higher (refer—https://go.dev/doc/install)
+
+### 1. Clone and Setup
+
+```bash
+git clone git@github.com:techops-recsys-lateral-hiring/joi-delivery-golang.git
+cd joi-delivery-golang
+```
+
+### 2. Install Dependencies
+
+```bash
+make deps
+```
+
+### 3. Run Tests
+
+```bash
+make test
+```
+
+### 4. Start the Server
+
+```bash
+make run
+```
+
+The server will start on `http://localhost:8080`
+
+## Development Commands
+
+The project includes a `Makefile` with common development tasks:
+
+| Command | Description |
+|---------|-------------|
+| `make run` | Run the application locally |
+| `make test` | Run all tests |
+| `make deps` | Download dependencies |
+| `make tidy` | Tidy go.mod and go.sum |
+
