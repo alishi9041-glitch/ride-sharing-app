@@ -9,7 +9,7 @@ import (
 	"syscall"
 	"time"
 
-	"joi-delivery-golang/cmd/server"
+	"basic/cmd/server"
 )
 
 func main() {

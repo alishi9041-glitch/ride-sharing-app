@@ -3,11 +3,19 @@ package server
 import (
 	"context"
 
+	"basic/cmd/api"
+	"basic/cmd/api/handler"
+	"basic/internal/fare"
+	"basic/internal/service"
+
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"joi-delivery-golang/cmd/api"
-	"joi-delivery-golang/cmd/api/handler"
-	"joi-delivery-golang/internal/service"
+)
+
+const (
+	BASE_FARE   = 50
+	RATE_PER_KM = 10
+	NIGHT_PRICE = 1.2
 )
 
 type Server struct {
@@ -42,15 +50,19 @@ func (s *Server) ShutDown(ctx context.Context) error {
 }
 
 func registerHandlers() handler.Handler {
-	userService := service.NewUserService()
-	productService := service.NewProductService()
-	cartService := service.NewCartService(userService, productService)
 
-	cartHandler := handler.NewCartHandler(cartService)
-	inventHandler := handler.NewInventoryHandler()
+	calculator := fare.NewFareCalculator([]fare.FareStrategy{
+		fare.BaseFareStrategy{BaseFare: float64(BASE_FARE)},
+		fare.PerKmStrategy{RatePerKm: float64(RATE_PER_KM)},
+		fare.SurgeStrategy{},
+		fare.NightStrategy{Multiplier: NIGHT_PRICE},
+		fare.DiscountStrategy{},
+	})
+
+	rideService := service.NewRideService(calculator)
+	rideHandler := handler.NewRideHandler((rideService))
 
 	return handler.Handler{
-		CartHandler:      cartHandler,
-		InventoryHandler: inventHandler,
+		RideHandler: rideHandler,
 	}
 }

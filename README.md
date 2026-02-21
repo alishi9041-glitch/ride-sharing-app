@@ -1,197 +1,226 @@
-# Welcome to JOI Delivery
-JOI Delivery is built for real life. For the young professional who gets home late and doesn’t have the energy to cook. For the student with an exam tomorrow and an empty fridge tonight. These aren’t exceptions — they’re everyday moments. That’s why JOI Delivery brings food and groceries to your door, fast, fresh, and right when you need them.
+# 🚗 SwiftRide – Ride Sharing Backend Assignment
 
-Customers struggle with:
+## 📌 Overview
 
-- Cluttered browsing experiences that don’t understand their preferences.
-- Limited customization when ordering meals or groceries.
-- Unclear order status or delivery timelines.
-- Poor payment experience, or failed checkouts.
-- Lack of timely feedback channels to report a bad experience or appreciate a good one.
+SwiftRide is a backend system for a ride-sharing platform designed to connect riders with nearby drivers efficiently and safely.
 
-JOI Delivery was built not just as another delivery app, but as a thoughtful, technology-first platform that reimagines how essentials reach customers in the most seamless way.
+This assignment focuses on building a scalable, concurrency-safe backend service that powers:
 
-# Introducing JOI Delivery
+- Ride requests
+- Driver matching
+- Real-time ride tracking
+- Fare calculation
+- Ride lifecycle management
 
-JOI Delivery, launched in 2024, is a hyperlocal delivery app designed to bring food and groceries to your doorstep in under 45 minutes. With the tagline "Speed meets convenience," it connects customers to nearby restaurants and stores through a seamless digital experience. The app solves the hassle of long wait times and limited local options by offering real-time tracking, instant order updates, and a wide network of trusted vendors.
+**Tagline:** *Move smarter. Move faster.*
 
-## Business Goals
-- Differentiated Value Proposition & Niche Dominance
-- Deliver Unmatched Customer Experience & Loyalty
-- Superior Operational Efficiency & Cost Advantage
-- Robust & Engaged Partner Ecosystem
+---
 
-## Why they need Thoughtworks help
-As JOI Delivery continues to grow and serve more neighborhoods, we’re scaling our platform to handle increasing demand, enhance user experience, and support smarter delivery logistics. They're looking for passionate developers to help us build robust, efficient, and scalable solutions that power everything from order placement to real-time tracking.
-Your expertise will directly impact how quickly and reliably customers receive their essentials—and how smoothly local vendors and delivery partners operate within our ecosystem.
+## 🚨 Problem Statement
 
-### Users/Customers
-Sample user profiles are available in the repository to support development and testing scenarios.
+Modern ride-sharing platforms face the following challenges:
 
-| UserId   | FirstName | LastName|
-|----------|-----------|---------|
-| user101  | John      | Doe     |
+- Long driver allocation times
+- Driver double allocation during peak traffic
+- No real-time ride tracking
+- Unclear surge pricing
+- Unreliable payment processing
+- Invalid ride state transitions
 
-### Stores
-Sample store data seeded for development purposes only.
+SwiftRide aims to solve these using clean architecture and robust backend design.
 
-| StoreId  | OutletName     |
-|----------|----------------|
-| store101 | Fresh Picks    |
-| store102 | Natural Choice |
+---
 
-### Grocery Products
-Dummy Products for Stores to sell and users to buy from.
+## 🎯 Business Goals
 
-| ProductId  | ProductName | StoreRefId |
-|------------|-------------|------------|
-| product101 | Wheat Bread | store101   |
-| product102 | Spinach     | store101   |
-| product103 | Crackers    | store101   |
+- 5-second ride matching SLA (Service Level Agreement)
+- Real-time driver tracking
+- Transparent fare calculation
+- Concurrency-safe driver allocation
+- Scalable architecture for high traffic
 
-## API
+---
 
-Below is a list of API endpoints with their respective input and output. Please note that the application needs to be running for the following endpoints to work. For more information about how to run the application, please refer to run the application section above.
+## 👥 Sample Data
 
-### Add Product to Cart
-```http
-POST /cart/product
-Content-Type: application/json
-```
+### Riders
 
-Request Body
+| RiderId   | FirstName | LastName |
+|------------|------------|------------|
+| rider101  | John       | Doe        |
+
+### Drivers
+
+| DriverId   | FirstName | LastName | Status     |
+|------------|------------|------------|------------|
+| driver101 | Alice      | Kumar      | AVAILABLE  |
+| driver102 | Rahul      | Sharma     | BUSY       |
+
+### Vehicles
+
+| VehicleId  | Type   | DriverRefId |
+|------------|--------|-------------|
+| vehicle101 | Sedan  | driver101   |
+| vehicle102 | SUV    | driver102   |
+
+---
+
+## 🌐 API Specification
+
+Base URL:
+
+http://localhost:8080
+
+
+#### Request Body
+
 ```json
 {
-  "userId": "user101",
-  "productId": "product101",
-  "outletId": "store101"
-}
-```
-
-Response Body
-```json
-{
-  "cart": {
-    "cartId": "cart101",
-    "outlet": null,
-    "products": [
-      {
-        "productId": "product103",
-        "productName": "Crackers",
-        "mrp": 10.5,
-        "sellingPrice": null,
-        "weight": 500,
-        "expiryDate": 0,
-        "threshold": 10,
-        "availableStock": 30,
-        "discount": null,
-        "store": {
-          "name": "Fresh Picks",
-          "description": null,
-          "outletId": "store101",
-          "inventory": []
-        }
-      }
-    ],
-    "user": null
+  "riderId": "rider101",
+  "pickup": {
+    "latitude": 12.9716,
+    "longitude": 77.5946
   },
-  "product": {
-    "productId": "product103",
-    "productName": "Crackers",
-    "mrp": 10.5,
-    "sellingPrice": null,
-    "weight": 500,
-    "expiryDate": 0,
-    "threshold": 10,
-    "availableStock": 30,
-    "discount": null,
-    "store": {
-      "name": "Fresh Picks",
-      "description": null,
-      "outletId": "store101",
-      "inventory": []
-    }
+  "drop": {
+    "latitude": 12.9352,
+    "longitude": 77.6245
   },
-  "sellingPrice": null
+  "vehicleType": "Sedan"
 }
-```
 
-### View Cart
-```http
-GET /cart/view?userId=user101
-```
+#### Response
 
-Response Body
-```json
 {
-  "id": "cart101",
-  "outlet": null,
-  "user": {
-    "id": "user101",
-    "username": "",
-    "firstName": "John",
-    "lastName": "Doe",
-    "email": "",
-    "phoneNumber": "",
-    "cart": null
+  "rideId": "ride123",
+  "status": "REQUESTED",
+  "estimatedFare": 220.5,
+  "estimatedArrivalTimeInMinutes": 6
+}
+
+
+POST /ride/accept
+
+{
+  "rideId": "ride123",
+  "driverId": "driver101"
+}
+{
+  "rideId": "ride123",
+  "status": "ACCEPTED"
+}
+
+
+
+POST /ride/start
+POST /ride/complete
+{
+  "rideId": "ride123",
+  "status": "COMPLETED",
+  "finalFare": 235.75,
+  "paymentStatus": "SUCCESS"
+}
+
+
+GET /ride/track?rideId=ride123
+{
+  "rideId": "ride123",
+  "driverLocation": {
+    "latitude": 12.9701,
+    "longitude": 77.5950
   },
-  "products": []
+  "etaMinutes": 4
 }
-```
 
-### Inventory Health
-```http
-GET /inventory/health?storeid=<storeid>
-```
 
-Response Body
-```json lines
-{
-    // to be implemented.
-}
-```
+POST /driver/location
+POST /driver/status
 
-## Tech Requirements & Quick Setup
 
-### Prerequisites
+Supported ride states:
+REQUESTED → ACCEPTED → STARTED → COMPLETED
+                    ↘
+                   CANCELLED
 
-- Go 1.24.5 or higher (refer—https://go.dev/doc/install)
 
-### 1. Clone and Setup
+Matching Strategy
 
-```bash
-git clone git@github.com:techops-recsys-lateral-hiring/joi-delivery-golang.git
-cd joi-delivery-golang
-```
+Design a pluggable matching strategy interface.
 
-### 2. Install Dependencies
+Support:
 
-```bash
-make deps
-```
+Nearest driver
 
-### 3. Run Tests
+Highest rating
 
-```bash
-make test
-```
+Lowest ETA
 
-### 4. Start the Server
+Surge-zone priority
 
-```bash
-make run
-```
 
-The server will start on `http://localhost:8080`
 
-## Development Commands
+Fare Strategy
 
-The project includes a `Makefile` with common development tasks:
+Support:
 
-| Command | Description |
-|---------|-------------|
-| `make run` | Run the application locally |
-| `make test` | Run all tests |
-| `make deps` | Download dependencies |
-| `make tidy` | Tidy go.mod and go.sum |
+Base fare
 
+Per kilometer pricing
+
+Surge pricing
+
+Night pricing
+
+Discount handling
+
+
+Concurrency Handling (Critical)
+
+If two riders request simultaneously and only one driver is available:
+
+The driver must not be assigned twice.
+
+Driver allocation must be atomic.
+
+Demonstrate thread safety.
+
+5️⃣ Scalability Considerations
+
+Design for:
+
+High concurrent ride requests
+
+Real-time driver location updates
+
+Low-latency driver matching
+
+
+
+🛠 Suggested Development Commands
+Command	Description
+make run	Run application locally
+make test	Run unit tests
+make tidy	Clean dependencies
+
+
+Bonus Challenges
+
+Add ride cancellation fee
+
+Add driver earnings wallet
+
+Add rider/driver rating system
+
+Add surge zones using geo-hashing
+
+Add idempotent payment handling
+
+Convert to event-driven architecture
+
+
+
+
+Notes -
+Missing payment 
+Data is currently global -> ugh sucks!
+When to take string/int and when to take pointer to string/int?
+Need to add testcases
